@@ -1,6 +1,10 @@
 package com.fatbird.plugins.stopwatch
 {
 	
+	import com.demonsters.debugger.MonsterDebugger;
+	import com.fatbird.utils.NumberFormater;
+	import com.imt.assets.Assets;
+	import com.imt.assets.fonts.Fonts;
 	import com.imt.framework.engine.data.GameData;
 	
 	import flash.events.TimerEvent;
@@ -29,9 +33,10 @@ package com.fatbird.plugins.stopwatch
 		private var currTime:int;
 		private var newTime:int;
 		private var mainTimer:Timer = new Timer(100);
-		private var timerText:TextField;
+		private var timerTextValue:TextField;
 		private var timerTextLabel:TextField;
-		private var bestTimeText:TextField;
+		private var bestTimeTextLabel:TextField;
+		private var bestTimeTextValue:TextField;
 		private var holder:Sprite;
 		
 		
@@ -39,8 +44,9 @@ package com.fatbird.plugins.stopwatch
 		public function StopWatchStarling()
 		{
 			
+			//trace("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 			trace(this);
-			//super(target);
+			///super(target);
 			super();
 			// Holder.
 			holder = new Sprite;
@@ -52,7 +58,18 @@ package com.fatbird.plugins.stopwatch
 			var h:int = 60;
 			var _y:int = 10;
 			// Label.
-			timerTextLabel = new TextField( 200, h, "Time:", "NeoFontRegular-ipadhd", s, 0xffffff );
+			
+			
+			
+			//MonsterDebugger.trace( this, Fonts.getFont( "NeoFont2-ipadhd" ) );
+			//trace( Fonts.getFont( "NeoFont2-ipadhd" ) );
+			
+		//	Fonts.createFont( "NeoFont2-ipadhd", Assets.getBitmap( "NeoFont2-ipadhd.png" ), Assets.getXML( "NeoFont2-ipadhd.fnt" ) );
+			
+			
+			
+			
+			timerTextLabel = new TextField( 200, h, "Time:", "Game-Bold", s, 0xffffff );
 			holder.addChild( timerTextLabel );
 			with( timerTextLabel )
 			{
@@ -68,9 +85,9 @@ package com.fatbird.plugins.stopwatch
 				
 			}
 			// Value.
-			timerText = new TextField( 500, h, "", "NeoFontRegular-ipadhd", s, 0xffffff );
-			holder.addChild( timerText );
-			with( timerText )
+			timerTextValue = new TextField( 500, h, "", "Game-Med", s, 0xffffff );
+			holder.addChild( timerTextValue );
+			with( timerTextValue )
 			{
 				
 				//border = true;
@@ -83,17 +100,38 @@ package com.fatbird.plugins.stopwatch
 				hAlign = HAlign.LEFT;
 				
 			}
-			// Best time.
-			bestTimeText = new TextField( 400, h, "", "NeoFontRegular-ipadhd", s, 0xffffff );
-			addChild(bestTimeText);
-			with( bestTimeText )
+			
+			
+			// Best time label.
+			bestTimeTextLabel = new TextField( 400, h, "", "Game-Bold", s, 0xffffff );
+			addChild(bestTimeTextLabel);
+			with( bestTimeTextLabel )
 			{
 				
 				//border = true;
-				hAlign = HAlign.RIGHT;
+				hAlign = HAlign.LEFT;
 				//width = 400;//stage.stageWidth;//=450;
 				//height=60;
-				x = GameData.STAGE_WIDTH - width - 35;//500;//300;
+				x = GameData.STAGE_WIDTH - width;//500;//300;
+				//x = timerTextValue.x + 150;
+				y = _y;
+				//fontSize = 40;
+				//autoSize = TextFormatAlign.LEFT;
+				
+			}
+			
+			// Best time value.
+			bestTimeTextValue = new TextField( 400, h, "", "Game-Med", s, 0xffffff );
+			addChild(bestTimeTextValue);
+			with( bestTimeTextValue )
+			{
+				
+				//border = true;
+				hAlign = HAlign.LEFT;
+				//width = 400;//stage.stageWidth;//=450;
+				//height=60;
+				//x = GameData.STAGE_WIDTH - width - 35;//500;//300;
+				x = bestTimeTextLabel.x + 210;//500;//300;
 				y = _y;
 				//fontSize = 40;
 				//autoSize = TextFormatAlign.LEFT;
@@ -111,7 +149,10 @@ package com.fatbird.plugins.stopwatch
 			currTime = getTimer();
 			newTime = currTime - startTime;
 			//timerText.text = "Time: "+ String( newTime );
-			timerText.text = String( newTime );
+			//timerText.text = String( newTime );
+			var s:String = com.fatbird.utils.NumberFormater.formatTime( newTime );
+			timerTextValue.text = s;
+			//trace( s );
 			
 		}
 		
@@ -119,8 +160,7 @@ package com.fatbird.plugins.stopwatch
 		public function startTimer():void
 		{
 			
-			trace("");
-			trace("startTimer");
+			//trace("startTimer ++++++++++");
 			startTime = getTimer();
 			mainTimer.start();
 			holder.visible = true;
@@ -178,7 +218,7 @@ package com.fatbird.plugins.stopwatch
 		{
 			
 			trace("setDiplayTime: " + n);
-			timerText.text = String( n );
+			timerTextValue.text = String( n );
 			
 		}
 		
@@ -187,8 +227,16 @@ package com.fatbird.plugins.stopwatch
 		{
 			
 			trace("setBestTime: " + n);
-			bestTimeText.text = "Best Time: "+ String( n );
-			bestTimeText.redraw();
+			// Label.
+			bestTimeTextLabel.text = "Best Time:"
+			bestTimeTextLabel.redraw();
+			// Value.
+			var s:String = com.fatbird.utils.NumberFormater.formatTime( n );
+			bestTimeTextValue.text = s;
+			bestTimeTextValue.redraw();
+			// Visible.
+			bestTimeTextLabel.visible = ( n>0 );
+			bestTimeTextValue.visible = ( n>0 );
 			
 		}
 		
